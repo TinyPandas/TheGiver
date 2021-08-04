@@ -1,6 +1,6 @@
 {
 	"name": "TheGiver",
-	"version": "0.1",
+	"version": "0.0.1",
 	"description": "Role giving bot with selects and emojis!",
 	"main": "index.js",
 	"scripts": {
