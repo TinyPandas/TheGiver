@@ -33,6 +33,8 @@ try {
 							const shouldLoad = await shouldLoadCommands(guild);
 
 							if (shouldLoad) {
+								
+
 								reloadGuild(guild);
 							}
 						})

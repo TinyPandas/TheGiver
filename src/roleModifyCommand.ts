@@ -68,7 +68,9 @@ const command: Command = {
 					.updateOne(guildQuery, { lastUpdate: new Date(Date.now()) })
 					.catch(console.error.bind(console));
 
-				return interaction.reply("Category created successfully.").catch(console.error.bind(console));
+				return interaction
+					.reply({ content: "Category created successfully.", ephemeral: true })
+					.catch(console.error.bind(console));
 			} else if (group === "edit" && subcommand === "role") {
 				console.log(options);
 				const roleId = String(options.get("role"));
@@ -101,7 +103,9 @@ const command: Command = {
 					.updateOne(guildQuery, { lastUpdate: new Date(Date.now()) })
 					.catch(console.error.bind(console));
 
-				return interaction.reply("Role edited successfully.").catch(console.error.bind(console));
+				return interaction
+					.reply({ content: "Role edited successfully.", ephemeral: true })
+					.catch(console.error.bind(console));
 			} else if (group === "edit" && subcommand === "category") {
 				console.log(options);
 				const categoryName = String(options.get("category"));
@@ -130,7 +134,9 @@ const command: Command = {
 					.updateOne(guildQuery, { lastUpdate: new Date(Date.now()) })
 					.catch(console.error.bind(console));
 
-				return interaction.reply("Category name changed successfully.").catch(console.error.bind(console));
+				return interaction
+					.reply({ content: "Category name changed successfully.", ephemeral: true })
+					.catch(console.error.bind(console));
 			} else if (group === "remove" && subcommand === "role") {
 				console.log(options);
 				const roleId = String(options.get("role"));
@@ -158,7 +164,9 @@ const command: Command = {
 					.updateOne(guildQuery, { lastUpdate: new Date(Date.now()) })
 					.catch(console.error.bind(console));
 
-				return interaction.reply("Role removed successfully.").catch(console.error.bind(console));
+				return interaction
+					.reply({ content: "Role removed successfully.", ephemeral: true })
+					.catch(console.error.bind(console));
 			} else if (group === "remove" && subcommand === "category") {
 				console.log(options);
 				const categoryName = String(options.get("category"));
@@ -186,7 +194,9 @@ const command: Command = {
 					.updateOne(guildQuery, { lastUpdate: new Date(Date.now()) })
 					.catch(console.error.bind(console));
 
-				return interaction.reply("Category removed successfully.").catch(console.error.bind(console));
+				return interaction
+					.reply({ content: "Category removed successfully.", ephemeral: true })
+					.catch(console.error.bind(console));
 			} else if (subcommand === "reload") {
 				//~~check if reload is needed. (guild only gets 100 command assigns / day)~~
 				//reload check: Fetch `lastReload` and `lastModify` from config
@@ -221,7 +231,10 @@ const command: Command = {
 				if (cats.length === 0) {
 					const defaultPayload = getDefaultPayload();
 					guild.commands.set(defaultPayload).catch(console.error.bind(console));
-					return interaction.reply("Category size is 0. Resetting to original command payload.");
+					return interaction.reply({
+						content: "Category size is 0. Resetting to original command payload.",
+						ephemeral: true,
+					});
 				}
 
 				//push full payload
@@ -234,12 +247,10 @@ const command: Command = {
 					.updateOne(guildQuery, { lastReload: new Date(Date.now()) })
 					.catch(console.error.bind(console));
 
-				return interaction.reply("Reloaded.").catch(console.error.bind(console));
+				return interaction.reply({ content: "Reloaded.", ephemeral: true }).catch(console.error.bind(console));
 			}
-
-			return interaction.reply("F").catch(console.error.bind(console));
 		} else {
-			return interaction.reply("Failed to fetch guild data.");
+			return interaction.reply({ content: "Failed to fetch guild data.", ephemeral: true });
 		}
 	},
 };

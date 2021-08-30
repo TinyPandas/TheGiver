@@ -204,6 +204,22 @@ export function getDefaultPayload(): ApplicationCommandData[] {
 }
 
 export async function shouldLoadCommands(guild: Guild): Promise<boolean> {
+	const cats: ApplicationCommandOptionChoice[] = [];
+
+	await configModel
+		.findOne({ guildId: guild.id })
+		.then(document => {
+			if (document) {
+				(document.get("categories") as string[][]).forEach(category => {
+					cats.push({
+						name: category[0],
+						value: category[0].toLowerCase(),
+					});
+				});
+			}
+		})
+		.catch(console.error.bind(console));
+
 	const commands = guild.commands;
 
 	if (commands) {
@@ -211,6 +227,8 @@ export async function shouldLoadCommands(guild: Guild): Promise<boolean> {
 
 		if (loadedCommands.find(command => command.name === "role")) return false;
 		if (loadedCommands.find(command => command.name === "rolemodify")) return false;
+
+		if (cats.length > 0) return true;
 
 		return true;
 	}

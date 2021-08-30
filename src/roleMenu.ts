@@ -28,5 +28,7 @@ export function handleRoleSelector(interaction: SelectMenuInteraction): void {
 		removed > 0 ? ` Removed: ${removed}` : ""
 	}`;
 
+	console.log(interaction);
+
 	interaction.update({ content: result, components: [] }).catch(console.error.bind(console));
 }
