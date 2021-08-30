@@ -289,7 +289,25 @@ export async function setPermissions(
 	return;
 }
 
-export function reloadGuild(guild: Guild, commands?: ApplicationCommandData[]): void {
+async function hasDocument(guildId: string): Promise<boolean> {
+	const data = await configModel.findOne({ guildId });
+
+	if (data) return Promise.resolve(true);
+
+	return Promise.resolve(false);
+}
+
+async function createData(guildId: string): Promise<void> {
+	await configModel.create({ guildId }).catch(console.error.bind(console));
+}
+
+export async function reloadGuild(guild: Guild, commands?: ApplicationCommandData[]): Promise<void> {
+	const hasData = await hasDocument(guild.id);
+
+	if (!hasData) {
+		await createData(guild.id);
+	}
+
 	guild.commands
 		.set(commands ?? getDefaultPayload())
 		.then(slashCommands => {
@@ -298,16 +316,20 @@ export function reloadGuild(guild: Guild, commands?: ApplicationCommandData[]): 
 		.catch(console.error.bind(console));
 }
 
-export function setGuildRole(guild: Guild, type: string, role: Role | string): void {
+export async function setGuildRole(guild: Guild, type: string, role: Role | string): Promise<void> {
+	const hasData = await hasDocument(guild.id);
+
+	if (!hasData) {
+		await createData(guild.id);
+	}
+
 	configModel
 		.updateOne({ guildId: guild.id }, { [type]: role instanceof Role ? String(role.id) : role })
 		.catch(console.error.bind(console));
 }
 
 export async function initializeGuild(guild: Guild): Promise<void> {
-	const guildQuery = { guildId: String(guild.id) };
-
-	configModel.create(guildQuery).catch(console.error.bind(console));
+	await createData(guild.id);
 
 	const roles = await guild.roles.fetch();
 
@@ -317,15 +339,15 @@ export async function initializeGuild(guild: Guild): Promise<void> {
 	const roleManagerRole = roles.find(role => role.name.toLowerCase() === "rolemanager");
 
 	if (memberRole) {
-		setGuildRole(guild, "memberId", memberRole);
+		await setGuildRole(guild, "memberId", memberRole);
 	}
 
 	if (roleManagerRole) {
-		setGuildRole(guild, "roleManagerId", roleManagerRole);
+		await setGuildRole(guild, "roleManagerId", roleManagerRole);
 	}
 
 	if (memberRole && roleManagerRole) {
-		reloadGuild(guild);
+		await reloadGuild(guild);
 	}
 
 	return;

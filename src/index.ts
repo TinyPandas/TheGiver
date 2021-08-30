@@ -33,9 +33,7 @@ try {
 							const shouldLoad = await shouldLoadCommands(guild);
 
 							if (shouldLoad) {
-								
-
-								reloadGuild(guild);
+								await reloadGuild(guild);
 							}
 						})
 						.catch(console.error.bind(console));
@@ -46,7 +44,7 @@ try {
 
 	client.on("guildCreate", initializeGuild);
 
-	client.on("messageCreate", message => {
+	client.on("messageCreate", async message => {
 		const guild = message.guild;
 		const author = message.member;
 
@@ -67,10 +65,10 @@ try {
 						console.log(memberId);
 						console.log(roleManagerId);
 
-						setGuildRole(guild, "memberId", memberId);
-						setGuildRole(guild, "roleManagerId", roleManagerId);
+						await setGuildRole(guild, "memberId", memberId);
+						await setGuildRole(guild, "roleManagerId", roleManagerId);
 
-						reloadGuild(guild);
+						await reloadGuild(guild);
 
 						configModel
 							.updateOne({ guildId: guild.id }, { lastUpdate: new Date(Date.now()) })
@@ -79,8 +77,8 @@ try {
 						const unknownId = args[0].substr(3).replace("<@&", "").replace(">", "");
 						const classifier = args[0].substr(1, 1);
 
-						setGuildRole(guild, classifier === "m" ? "memberId" : "roleManagerId", unknownId);
-						reloadGuild(guild);
+						await setGuildRole(guild, classifier === "m" ? "memberId" : "roleManagerId", unknownId);
+						await reloadGuild(guild);
 
 						configModel
 							.updateOne({ guildId: guild.id }, { lastUpdate: new Date(Date.now()) })

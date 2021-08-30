@@ -241,7 +241,7 @@ const command: Command = {
 				const rolePayload = generateRolePayload(cats);
 				const roleModifyPayload = generateRoleModifyPayload(cats);
 
-				reloadGuild(guild, [rolePayload, roleModifyPayload]);
+				await reloadGuild(guild, [rolePayload, roleModifyPayload]);
 
 				configModel
 					.updateOne(guildQuery, { lastReload: new Date(Date.now()) })
